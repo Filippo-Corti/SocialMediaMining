@@ -13,3 +13,6 @@ qCbfTN-caFI (Lex Friedman)
 * Mine data from the 2 videos above
 * Extract the set of commentators from both videos and check how many commented under both (I am hoping between 200 and 1000)
 
+
+https://www.fox9.com/news/which-podcasts-have-kamla-harris-donald-trump-done
+
