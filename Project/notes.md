@@ -16,3 +16,6 @@ qCbfTN-caFI (Lex Friedman)
 
 https://www.fox9.com/news/which-podcasts-have-kamla-harris-donald-trump-done
 
+* Il Sottografo con nodi aventi grado >= 2 è interessante.
+* Il sottografo con nodi che hanno interagito in almeno due video è poco interessante: la maggior parte dei nodi è isolata
+
