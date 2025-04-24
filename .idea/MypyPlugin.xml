@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="MypySettings">
-    <option name="arguments" value="--follow-imports silent --exclude \.pyi$ --strict-equality --install-types --check-untyped-defs --disable-error-code=import-untyped" />
-    <option name="mypyExecutable" value="C:\Users\Filippo Corti\miniconda3\envs\SocialMediaMining\Scripts\mypy.exe" />
-    <option name="projectDirectory" value="$PROJECT_DIR$" />
-  </component>
-</project>
