@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import Any
 
 from atproto_client.models.app.bsky.actor.defs import ProfileViewBasic
 from atproto_client.models.app.bsky.feed.defs import PostView
@@ -35,6 +34,7 @@ class BSPost:
     language : str
     content : str
     url : str
+    uri : str
 
     @staticmethod
     def from_post_view(post : PostView):
@@ -42,12 +42,13 @@ class BSPost:
             bs_post = BSPost(
                 id=post.cid,
                 author=BSAccount.from_profile_view(post.author),
-                in_reply_to_id=post.record.reply.parent.cid,
+                in_reply_to_id=post.record.reply.parent.cid if post.record.reply else None,
                 created_at=post.record.created_at,
                 replies_count=post.reply_count,
                 language=post.record.langs[0] if post.record.langs else None,
                 content=post.record.text,
                 url=f"https://bsky.app/profile/{post.author.handle}/post/{post.uri.split("/")[-1]}",
+                uri=post.uri,
             )
             return bs_post
         except:
