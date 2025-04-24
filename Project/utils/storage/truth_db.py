@@ -1,5 +1,5 @@
 import sqlite3
-from typing import List, Any
+from typing import List
 
 from ..objects.truthsocial import TSAccount, TSPost
 
