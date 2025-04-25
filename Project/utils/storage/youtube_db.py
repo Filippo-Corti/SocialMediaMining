@@ -39,7 +39,8 @@ class SQLiteYoutubeSaver:
             in_reply_to_id TEXT,
             created_at TEXT,
             content TEXT,
-            FOREIGN KEY (author_id) REFERENCES Accounts(id)
+            FOREIGN KEY (author_id) REFERENCES Accounts(id),
+            FOREIGN KEY (video_id) REFERENCES Videos(id)
         )''')
 
         self.conn.commit()
@@ -101,4 +102,4 @@ class SQLiteYoutubeSaver:
             self._insert_account(comment.author)
             self.conn.commit()
         except sqlite3.Error as e:
-            print(f"Database error: {e}")
+            pass
