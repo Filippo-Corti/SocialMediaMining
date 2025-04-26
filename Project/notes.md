@@ -39,48 +39,43 @@ Before starting the analysis these are the numbers I have:
 - On BlueSky: 15k accounts and 20k posts
 - On Youtube: 18 videos (12 for trump, 6 for harris), 60k accounts and 115k comments
 
-
-FOR Truth vs Bluesky:
-
-- Consider Normalizing Networks by having two Networks with around same number of nodes (same order)
-- Visualize the networks
-- Basic measures:
-  - Size and Order
-  - Density
-  - Average Degree
-  - Connected Components
-- Centralization and influence:
-  - Degree Distribution (Centralization?)
-  - Betweenness Centrality
-  - Eigenvector Centrality
-- Community Detection:
-  - Modularity
-  - Communities
-- Activity Inequality:
-  - Gini Coefficient on comments per user
-  - Lorenz Curve
-- Others:
-  - Reciprocity
-  - Link Strength
-  - Stability: Social Balance Theory and Social Status Theory (after stance labels probably)
-  - ECHO CHAMBERS 
-- Then move on the semantic analysis...
-  - Assortativity on those attributes...
-
-What's not relevant:
-- Clustering Coefficient (Transitivity)
-- Average path length / diameter
-- Assortativity (before stance labeling)
-
 Questions: 
 - Do I need to extract # of followers and following for each account?
 - Should I extract the bio from the accounts? Could be significant to understand the stance / compare the stance
 - Are the Social Media Platforms a good choice for this? Are they polarized? Can you measure that?
 
-Use Echo Chamber Theory, Selective Exposure, or Deliberative Democracy theory as a frame.
+
+FOR Truth vs Bluesky:
+
+- Consider Normalizing Networks by having two Networks with around same number of nodes (same order)
+- Visualize the networks
+1. Basic measures:
+  - Size and Order
+  - Density
+  - Average Degree
+  - Connected Components
+2. (ASK?) Centralization and influence:
+  - Degree Distribution (Centralization?)
+  - Betweenness Centrality
+  - Eigenvector Centrality
+3. Activity Inequality: > I USE THEM TO COMPARE THE DISTRIBUTIONS OF COMMENTS IN EACH NETWORK?
+  CHECK OUT RANDOM NETWORK...
+    - Gini Coefficient on comments per user
+    - Lorenz Curve
+4. Echo Chambers Theory (requires Machine Learning for content labeling)
+ECHO CHAMBERS -> ECHO CHAMBERS THEORY:
+   1. Network Modularity and Community Detection
+   2. Stance Homogeneity within Communities (Check out Homophily from Echo Chambers paper)
+   3. Stance Assortativity (SELECTIVE EXPOSURE)
+   4. Information Diffusion Simulation (SIR Model - Check out part 2 from Echo Chambers paper)
+5. (ASK?) Others:
+  - Reciprocity
+  - Link Strength
+  - Stability: Social Balance Theory and Social Status Theory (after stance labels probably)
 
 
 FOR Youtube:
+-> IMPORTANT: Deliberative Democracy theory as a frame.
 
 Notes:
 - When users from opposing stances reply, do they reinforce, shift, or escalate?
