@@ -1,13 +1,3 @@
-### Useful video ids:
-
-##### HARRIS
-_KCRsjPCiCI (Call Her Daddy)
-
-##### TRUMP
-qCbfTN-caFI (Lex Friedman)
-
----
-
 ### TODO:
 * Add an SQLite Database to store the comments. It could maybe be just one comment table with a parent_id and video_id attribute.
 * Mine data from the 2 videos above
@@ -54,12 +44,11 @@ FOR Truth vs Bluesky:
   - Density
   - Average Degree
   - Connected Components
-2. (ASK?) Centralization and influence:
+2. Centralization and influence:
   - Degree Distribution (Centralization?)
-  - Betweenness Centrality
-  - Eigenvector Centrality
-3. Activity Inequality: > I USE THEM TO COMPARE THE DISTRIBUTIONS OF COMMENTS IN EACH NETWORK?
-  CHECK OUT RANDOM NETWORK...
+  - Degree Centrality and Betweenness Centrality
+3. Activity Inequality: > I USE THEM TO COMPARE THE DISTRIBUTIONS OF COMMENTS IN EACH NETWORK
+  Compare with Random Network Models -> 2x Configuration Model and 1x Poisson Degree Distribution
     - Gini Coefficient on comments per user
     - Lorenz Curve
 4. Echo Chambers Theory (requires Machine Learning for content labeling)
@@ -68,20 +57,44 @@ ECHO CHAMBERS -> ECHO CHAMBERS THEORY:
    2. Stance Homogeneity within Communities (Check out Homophily from Echo Chambers paper)
    3. Stance Assortativity (SELECTIVE EXPOSURE)
    4. Information Diffusion Simulation (SIR Model - Check out part 2 from Echo Chambers paper)
-5. (ASK?) Others:
-  - Reciprocity
-  - Link Strength
-  - Stability: Social Balance Theory and Social Status Theory (after stance labels probably)
+
 
 
 FOR Youtube:
--> IMPORTANT: Deliberative Democracy theory as a frame.
+- This time I don't need to normalize the network.
+- Visualize it
+1. Basic Metrics:
+   - Size and Order
+   - Density
+   - Degree Distribution
+   - Components
+   - Bonus: Some stats about the videos and the asymmetry in volume
+2. Community Detection and coloring, just to see what's up
+3. DELIBERATIVE DEMOCRACY THEORY (identifying cross-partisan threads and their characteristics):
+   1. Stance Labeling of content using LLMs (Left, Neutral, Right)
+   2. Aggregate for User-Level stance -> Categorize users
+   3. Analyze Comment Threads in general (see paper Etta et al.) [COULD BE DONE BEFORE]
+   4. Find Cross-Partisan Interactions (see Wu & Resnick paper) -> Do they match bridges?
+   5. Interaction Outcome Analysis with LLMs for these Cross-Partisan conversations
+      - Tone (Hostile, Neutral, Friendly)
+      - Escalation (Does the conflict increase?)
+      - Agreement or Disagreement?
+      - Other things...
+      - Any Dominant Tone / Last words
+   6. Refection on LLMs Bias and Credibility
+
+    
+------------------------
 
 Notes:
 - When users from opposing stances reply, do they reinforce, shift, or escalate?
 - Are these discussions less likely to continue (shorter threads)?
 - Does one side dominate the conversation?
 
-
-In Part 2, lean on Conversational Breakdown literature or polarization through media research.
-
+NOW WHAT:
+- Figure out content labeling with and without an LLM:
+  - PoliticalBiasBERT https://huggingface.co/bucketresearch/politicalBiasBERT
+    - Needs to be set for regression (labeling [-1,1])
+    - I need around 1000 labeled examples
+    - I can then train it and run it on my 75k examples.
+  - A GPT Model (don't know which one yet) for second part
