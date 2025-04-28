@@ -122,9 +122,20 @@ class SQLiteBlueSkySaver:
         except sqlite3.Error as e:
             print(f"Database error: {e}")
 
-    def extract_network(self) -> nx.Graph:
+    def extract_network(self, top_k : int | None = None) -> nx.Graph:
         """Returns the reply network, with all tracked attributes for nodes and edges"""
-        self.cursor.execute("SELECT * FROM Posts")
+        if not top_k:
+            self.cursor.execute("SELECT * FROM Posts")
+        else:
+            self.cursor.execute("""
+            SELECT * FROM Posts 
+            WHERE author_id IN (
+                SELECT author_id FROM Posts 
+                GROUP BY author_id 
+                ORDER BY COUNT(*) DESC
+                LIMIT (?)
+            )
+            """, (top_k,))
         posts = {
             post_row[0]: post_row
             for post_row in self.cursor.fetchall()
