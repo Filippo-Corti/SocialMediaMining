@@ -1,12 +1,13 @@
 import sqlite3
-from typing import List, Any
+import networkx as nx
+from typing import List
 
 from ..objects.bluesky import BSAccount, BSPost
 
 
 class SQLiteBlueSkySaver:
 
-    def __init__(self, db_name: str = 'bluesky.db'):
+    def __init__(self, db_name: str = 'db/bluesky.db'):
         self.db_name = db_name
         self.conn = sqlite3.connect(self.db_name)
         self.cursor = self.conn.cursor()
@@ -120,3 +121,63 @@ class SQLiteBlueSkySaver:
             self.conn.commit()
         except sqlite3.Error as e:
             print(f"Database error: {e}")
+
+    def extract_network(self) -> nx.Graph:
+        """Returns the reply network, with all tracked attributes for nodes and edges"""
+        self.cursor.execute("SELECT * FROM Posts")
+        posts = {
+            post_row[0]: post_row
+            for post_row in self.cursor.fetchall()
+        }
+        self.cursor.execute("SELECT * FROM Accounts")
+        accounts = {
+            account_row[0]: account_row
+            for account_row in self.cursor.fetchall()
+        }
+
+        edges = list()
+
+        node_attributes = {}
+        for account_id, account in accounts.items():
+            node_attributes[account_id] = dict(
+                id=account_id,
+                username=account[1],
+                display_name=account[2] if account[2] else "",
+                url=account[3]
+            )
+
+        edge_attributes = {}
+        for post_id, post in posts.items():
+            replier_id = post[1]
+            replied_to_post = post[2]
+
+            if not replied_to_post or replied_to_post not in posts:
+                continue
+
+            replied_to_id = posts[replied_to_post][1]
+
+            edge = (replier_id, replied_to_id)
+            edges.append(edge)
+
+            if edge not in edge_attributes:
+                edge_attributes[edge] = dict()
+
+            post_idx = len(edge_attributes[edge])
+
+            edge_attributes[edge][f"post{post_idx}"] = dict(
+                id=post_id,
+                author_id=post[1],
+                in_reply_to_id=post[2],
+                created_at=post[3],
+                replies_count=post[4],
+                language=post[5] if post[5] else "",
+                content=post[6],
+                url=post[7],
+                uri=post[8]
+            )
+
+        G = nx.from_edgelist(edges, create_using=nx.DiGraph())
+        nx.set_node_attributes(G, node_attributes)
+        nx.set_edge_attributes(G, edge_attributes)
+
+        return G
