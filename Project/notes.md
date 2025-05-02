@@ -42,7 +42,7 @@ FOR Truth vs Bluesky:
 1. Basic measures:
   - Size and Order
   - Density
-  - Average Degree
+  - Average Degree <-- CORRELATION BETWEEN IN DEGREE AND OUT DEGREE? JOINT DISTRIBUTION
   - Connected Components
 2. Centralization and influence:
   - Degree Distribution (Centralization?)
