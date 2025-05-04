@@ -47,7 +47,7 @@ FOR Truth vs Bluesky:
 2. Centralization and influence:
   - Degree Distribution (Centralization?)
   - Degree Centrality and Betweenness Centrality
-3. Activity Inequality: > I USE THEM TO COMPARE THE DISTRIBUTIONS OF COMMENTS IN EACH NETWORK
+3. Activity Inequality: > I USE THEM TO COMPARE THE DISTRIBUTIONS OF COMMENTS IN EACH NETWORK > DONE, VERY INTERESTING
   Compare with Random Network Models -> 2x Configuration Model and 1x Poisson Degree Distribution
     - Gini Coefficient on comments per user
     - Lorenz Curve
