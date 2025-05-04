@@ -152,13 +152,16 @@ class SQLiteTruthSaver:
                 id=account_id,
                 username=account[1],
                 display_name=account[2],
-                url=account[3]
+                url=account[3],
+                posts_count=0
             )
 
         edge_attributes = {}
         for post_id, post in posts.items():
             replier_id = post[1]
             replied_to_post = post[2]
+
+            node_attributes[replier_id]['posts_count'] += 1
 
             if not replied_to_post:
                 continue
