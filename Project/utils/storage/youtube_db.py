@@ -1,11 +1,12 @@
 import sqlite3
-from typing import List
+
+import networkx as nx
 
 from ..objects.youtube import YTVideo, YTAccount, YTComment
 
 class SQLiteYoutubeSaver:
 
-    def __init__(self, db_name: str = 'youtube.db'):
+    def __init__(self, db_name: str = 'db/youtube.db'):
         self.db_name = db_name
         self.conn = sqlite3.connect(self.db_name)
         self.cursor = self.conn.cursor()
@@ -103,3 +104,76 @@ class SQLiteYoutubeSaver:
             self.conn.commit()
         except sqlite3.Error as e:
             pass
+
+    def extract_network(
+            self,
+            video_ids : list[str] | None = None
+    ) -> nx.Graph:
+        """Returns the reply network, with all tracked attributes for nodes and edges"""
+        if not video_ids:
+            self.cursor.execute("SELECT id from Videos")
+            video_ids = [row[0] for row in self.cursor.fetchall()]
+
+        print(video_ids)
+
+        placeholders = ",".join(["?"] * len(video_ids))
+        self.cursor.execute(f"""
+        SELECT * FROM Comments
+        WHERE video_id IN ({placeholders})
+        """, video_ids)
+        comments = {
+            comment_row[0]: comment_row
+            for comment_row in self.cursor.fetchall()
+        }
+        self.cursor.execute("SELECT * FROM Accounts")
+        accounts = {
+            account_row[0]: account_row
+            for account_row in self.cursor.fetchall()
+        }
+
+        edges = list()
+
+        node_attributes = {}
+        for account_id, account in accounts.items():
+            node_attributes[account_id] = dict(
+                id=account_id,
+                username=account[1],
+                url=account[2],
+                comments_count=0
+            )
+
+        edge_attributes = {}
+        for comment_id, comment in comments.items():
+            replier_id = comment[3]
+            replied_to_post = comment[4]
+
+            node_attributes[replier_id]['comments_count'] += 1
+
+            if not replied_to_post or replied_to_post not in comments:
+                continue
+
+            replied_to_id = comments[replied_to_post][3]
+
+            edge = (replier_id, replied_to_id)
+            edges.append(edge)
+
+            if edge not in edge_attributes:
+                edge_attributes[edge] = dict()
+
+            comment_idx = len(edge_attributes[edge])
+
+            edge_attributes[edge][f"comment{comment_idx}"] = dict(
+                id=comment_id,
+                video_id=comment[1],
+                parent_id=comment[2],
+                author_id=comment[3],
+                in_reply_to_id=comment[4],
+                created_at=comment[5],
+                content=comment[6],
+            )
+
+        G = nx.from_edgelist(edges, create_using=nx.DiGraph())
+        nx.set_node_attributes(G, node_attributes)
+        nx.set_edge_attributes(G, edge_attributes)
+
+        return G
