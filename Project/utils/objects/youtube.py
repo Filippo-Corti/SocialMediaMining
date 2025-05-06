@@ -72,3 +72,11 @@ class YTThreadTree:
     value : YTComment
     children : list['YTThreadTree']
 
+    @staticmethod
+    def print(tree, level: int = 0):
+        indent = "  " * level
+        author = tree.value.author.display_name if tree.value.author else "Unknown"
+        print(f"{indent}- {author}: {tree.value.content[:80]!r}")  # show up to 80 chars
+
+        for child in tree.children:
+            YTThreadTree.print(child, level + 1)

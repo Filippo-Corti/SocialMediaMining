@@ -141,7 +141,7 @@ class SQLiteYoutubeSaver:
                 content=row[6],
             )
             comment_map[comment.id] = comment
-            if comment.parent_id:
+            if comment.parent_id and comment.parent_id != comment.id:
                 children_map[comment.parent_id].append(comment)
 
         print(len(children_map))
