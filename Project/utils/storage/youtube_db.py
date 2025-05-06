@@ -1,8 +1,10 @@
 import sqlite3
+from collections import defaultdict
 
 import networkx as nx
 
-from ..objects.youtube import YTVideo, YTAccount, YTComment
+from ..objects.youtube import YTVideo, YTAccount, YTComment, YTThreadTree
+
 
 class SQLiteYoutubeSaver:
 
@@ -105,6 +107,56 @@ class SQLiteYoutubeSaver:
         except sqlite3.Error as e:
             pass
 
+    def get_threads(self, video_ids: list[str] | None = None) -> list[YTThreadTree]:
+        if not video_ids:
+            self.cursor.execute("SELECT id FROM Videos")
+            video_ids = [row[0] for row in self.cursor.fetchall()]
+
+        placeholders = ",".join(["?"] * len(video_ids))
+        self.cursor.execute(f"""
+            SELECT * FROM Comments
+            WHERE video_id IN ({placeholders})
+        """, video_ids)
+        comment_rows = self.cursor.fetchall()
+
+        self.cursor.execute("SELECT * FROM Accounts")
+        accounts = {
+            row[0]: YTAccount(id=row[0], display_name=row[1], url=row[2])
+            for row in self.cursor.fetchall()
+        }
+
+        comment_map = {}
+        children_map = defaultdict(list)
+
+        print(len(comment_rows))
+
+        for row in comment_rows:
+            comment = YTComment(
+                id=row[0],
+                video_id=row[1],
+                parent_id=row[2],
+                author=accounts.get(row[3]),
+                in_reply_to_id=row[4],
+                created_at=row[5],
+                content=row[6],
+            )
+            comment_map[comment.id] = comment
+            if comment.parent_id:
+                children_map[comment.parent_id].append(comment)
+
+        print(len(children_map))
+
+        def build_tree(root: YTComment) -> YTThreadTree:
+            return YTThreadTree(
+                value=root,
+                children=[build_tree(child) for child in children_map.get(root.id, [])]
+            )
+
+        # It should use in_reply_to_id not parent_id, otherwise there are loops
+
+        roots = [c for c in comment_map.values() if c.parent_id == c.id]
+        return [build_tree(root) for root in roots]
+
     def extract_network(
             self,
             video_ids : list[str] | None = None
@@ -113,8 +165,6 @@ class SQLiteYoutubeSaver:
         if not video_ids:
             self.cursor.execute("SELECT id from Videos")
             video_ids = [row[0] for row in self.cursor.fetchall()]
-
-        print(video_ids)
 
         placeholders = ",".join(["?"] * len(video_ids))
         self.cursor.execute(f"""
@@ -177,3 +227,4 @@ class SQLiteYoutubeSaver:
         nx.set_edge_attributes(G, edge_attributes)
 
         return G
+

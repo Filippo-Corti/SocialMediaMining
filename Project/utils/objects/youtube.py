@@ -67,3 +67,8 @@ class YTComment:
             print(f"Failed to translate into YTComment: {e} ")
             return None
 
+@dataclass
+class YTThreadTree:
+    value : YTComment
+    children : list['YTThreadTree']
+
