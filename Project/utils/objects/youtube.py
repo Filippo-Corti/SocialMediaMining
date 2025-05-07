@@ -95,7 +95,6 @@ class YTThreadTree:
 
     def get_size(self) -> int:
         """Returns the number of nodes in the tree"""
-        # Do I need a base case?
         return 1 + sum([child.get_size() for child in self.children])
 
     def get_unique_users(self) -> int:
@@ -112,7 +111,7 @@ class YTThreadTree:
 
     def get_depth(self) -> int:
         """Returns the depth of the tree"""
-        return 1 + max([child.get_depth() for child in self.children])
+        return 1 + max([child.get_depth() for child in self.children], default=0)
 
     def get_wiener_index(self) -> float:
         """Returns the wiener index of the tree (sum of shortest path lengths between each pair of nodes) """

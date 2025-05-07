@@ -74,7 +74,7 @@ FOR Youtube:
    1. Stance Labeling of content using LLMs (Left, Neutral, Right) or not LLMs
    2. Aggregate for User-Level stance -> Categorize users
    3. Analyze Comment Threads in general (see paper Etta et al.) [COULD BE DONE BEFORE]
-      For each of these metrics, distribution and average:
+      For each of these metrics, distribution and average -> And compare those with root stance left and root stance right:
       - Tree Size
       - Tree Depth
       - Wiener Index

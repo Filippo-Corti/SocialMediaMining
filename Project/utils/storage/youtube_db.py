@@ -128,8 +128,6 @@ class SQLiteYoutubeSaver:
         comment_map = {}
         children_map = defaultdict(list)
 
-        print(len(comment_rows))
-
         for row in comment_rows:
             comment = YTComment(
                 id=row[0],
