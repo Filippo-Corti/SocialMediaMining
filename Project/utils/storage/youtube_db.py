@@ -141,10 +141,8 @@ class SQLiteYoutubeSaver:
                 content=row[6],
             )
             comment_map[comment.id] = comment
-            if comment.parent_id and comment.parent_id != comment.id:
-                children_map[comment.parent_id].append(comment)
-
-        print(len(children_map))
+            if comment.in_reply_to_id:
+                children_map[comment.in_reply_to_id].append(comment)
 
         def build_tree(root: YTComment) -> YTThreadTree:
             return YTThreadTree(
@@ -152,9 +150,7 @@ class SQLiteYoutubeSaver:
                 children=[build_tree(child) for child in children_map.get(root.id, [])]
             )
 
-        # It should use in_reply_to_id not parent_id, otherwise there are loops
-
-        roots = [c for c in comment_map.values() if c.parent_id == c.id]
+        roots = [c for c in comment_map.values() if not c.in_reply_to_id]
         return [build_tree(root) for root in roots]
 
     def extract_network(
