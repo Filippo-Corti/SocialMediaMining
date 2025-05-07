@@ -71,9 +71,17 @@ FOR Youtube:
    - Bonus: Some stats about the videos and the asymmetry in volume
 2. Community Detection and coloring, just to see what's up
 3. DELIBERATIVE DEMOCRACY THEORY (identifying cross-partisan threads and their characteristics):
-   1. Stance Labeling of content using LLMs (Left, Neutral, Right)
+   1. Stance Labeling of content using LLMs (Left, Neutral, Right) or not LLMs
    2. Aggregate for User-Level stance -> Categorize users
    3. Analyze Comment Threads in general (see paper Etta et al.) [COULD BE DONE BEFORE]
+      For each of these metrics, distribution and average:
+      - Tree Size
+      - Tree Depth
+      - Wiener Index
+      - Stance Ratio 
+      - Assortativity on Stance
+      - Number of Unique users
+      - Root Stance
    4. Find Cross-Partisan Interactions (see Wu & Resnick paper) -> Do they match bridges?
    5. Interaction Outcome Analysis with LLMs for these Cross-Partisan conversations
       - Tone (Hostile, Neutral, Friendly)
