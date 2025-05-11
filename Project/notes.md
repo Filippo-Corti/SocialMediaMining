@@ -106,3 +106,7 @@ NOW WHAT:
     - I need around 1000 labeled examples
     - I can then train it and run it on my 75k examples.
   - A GPT Model (don't know which one yet) for second part
+
+
+------------------------
+
