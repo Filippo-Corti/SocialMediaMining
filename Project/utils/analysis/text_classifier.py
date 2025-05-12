@@ -36,7 +36,7 @@ class TextClassifier:
     def get_political_leaning(self, texts: list[str]) -> list[str | None]:
         """Returns 'RIGHT', 'LEFT' or 'CENTER' """
         if not self.leaning_pipeline:
-            tokenizer = AutoTokenizer.from_pretrained("microsoft/deberta-v3-large", use_fast=False)
+            tokenizer = AutoTokenizer.from_pretrained("microsoft/deberta-v3-large", use_fast=True)
 
             self.leaning_pipeline = pipeline(
                 "text-classification",
