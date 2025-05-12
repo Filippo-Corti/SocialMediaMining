@@ -46,6 +46,19 @@ class SQLiteYoutubeSaver:
             FOREIGN KEY (video_id) REFERENCES Videos(id)
         )''')
 
+        self.cursor.execute('''
+        CREATE TABLE IF NOT EXISTS CommentAnalysis (
+            id TEXT PRIMARY KEY,
+            bias TEXT,
+            leaning TEXT,
+            is_political INTEGER,
+            sentiment TEXT,
+            emotion TEXT,
+            llm_label TEXT,
+            label INTEGER,
+            FOREIGN KEY (id) REFERENCES Comments(id)
+        )''')
+
         self.conn.commit()
 
     def insert_video(self, video : YTVideo) -> None:
@@ -106,6 +119,57 @@ class SQLiteYoutubeSaver:
             self.conn.commit()
         except sqlite3.Error as e:
             pass
+
+    def insert_comment_analysis(self, comment_id : int, **labels) -> None:
+        """Inserts or updates the comment analysis labels for the given comment"""
+        # Prepare columns and values
+        columns = list(labels.keys())
+        values = [labels[col] for col in columns]
+
+        # Check if the row already exists
+        self.cursor.execute("SELECT id FROM CommentAnalysis WHERE id = ?", (comment_id,))
+        exists = self.cursor.fetchone() is not None
+
+        if exists:
+            # UPDATE path
+            set_clause = ", ".join([f"{col} = ?" for col in columns])
+            sql = f"UPDATE CommentAnalysis SET {set_clause} WHERE id = ?"
+            self.cursor.execute(sql, values + [comment_id])
+        else:
+            # INSERT path
+            all_columns = ["id"] + columns
+            placeholders = ", ".join(["?"] * len(all_columns))
+            sql = f"INSERT INTO CommentAnalysis ({', '.join(all_columns)}) VALUES ({placeholders})"
+            self.cursor.execute(sql, [comment_id] + values)
+
+        self.conn.commit()
+
+    def get_all_comments(self) -> list[YTComment]:
+        self.cursor.execute(f"""SELECT * FROM Comments""")
+        comment_rows = self.cursor.fetchall()
+
+        self.cursor.execute("SELECT * FROM Accounts")
+        accounts = {
+            row[0]: YTAccount(id=row[0], display_name=row[1], url=row[2])
+            for row in self.cursor.fetchall()
+        }
+
+        comments = list()
+
+        for row in comment_rows:
+            comment = YTComment(
+                id=row[0],
+                video_id=row[1],
+                parent_id=row[2],
+                author=accounts.get(row[3]),
+                in_reply_to_id=row[4],
+                created_at=row[5],
+                content=row[6],
+            )
+            comments.append(comment)
+
+        return comments
+
 
     def get_threads(self, video_ids: list[str] | None = None) -> list[YTThreadTree]:
         if not video_ids:
