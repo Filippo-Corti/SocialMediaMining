@@ -88,6 +88,7 @@ class YTThreadTree:
         queue : list[YTThreadTree] = [self]
         while queue:
             curr = queue.pop(0)
+            G.add_node(curr.value.id)
             for child in curr.children:
                 G.add_edge(child.value.id, curr.value.id)
                 queue.append(child)
@@ -122,3 +123,5 @@ class YTThreadTree:
         n = self.get_size()
         return 2 * self.get_wiener_index() / (n * (n - 1))
 
+    def get_comments_per_user(self) -> float:
+        return self.get_size() / self.get_unique_users()
