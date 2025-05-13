@@ -36,7 +36,7 @@ class TextClassifier:
     def get_political_leaning(self, texts: list[str]) -> list[str | None]:
         """Returns 'RIGHT', 'LEFT' or 'CENTER' """
         if not self.leaning_pipeline:
-            tokenizer = AutoTokenizer.from_pretrained("microsoft/deberta-v3-large", use_fast=True)
+            tokenizer = AutoTokenizer.from_pretrained("microsoft/deberta-v3-large", use_fast=False)
 
             self.leaning_pipeline = pipeline(
                 "text-classification",
@@ -45,7 +45,7 @@ class TextClassifier:
             )
 
         try:
-            results = self.leaning_pipeline(texts, batch_size=16, truncation=True)
+            results = self.leaning_pipeline(texts, batch_size=8, truncation=True)
         except Exception as e:
             print(e)
             return [None] * len(texts)

@@ -145,7 +145,11 @@ class SQLiteYoutubeSaver:
         self.conn.commit()
 
     def get_all_comments(self) -> list[YTComment]:
-        self.cursor.execute(f"""SELECT * FROM Comments""")
+        self.cursor.execute(f"""
+            SELECT Comments.*
+            FROM Comments JOIN main.CommentAnalysis CA on Comments.id = CA.id
+            WHERE CA.leaning IS NULL
+        """)
         comment_rows = self.cursor.fetchall()
 
         self.cursor.execute("SELECT * FROM Accounts")
