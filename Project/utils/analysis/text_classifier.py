@@ -1,5 +1,6 @@
 from transformers import pipeline, Pipeline, AutoTokenizer
 import ollama
+import json
 
 
 class TextClassifier:
@@ -50,7 +51,7 @@ class TextClassifier:
             print(e)
             return [None] * len(texts)
 
-        labels = []
+        labels : list[str | None] = list()
         for result in results:
             leaning = result.get('label', None)
             match leaning:
@@ -96,7 +97,7 @@ class TextClassifier:
             )
 
         try:
-            results = self.sentiment_pipeline(texts, batch_size=16, truncation=True)
+            results = self.sentiment_pipeline(texts, batch_size=16, truncation=True, max_length=512)
         except Exception as e:
             print(e)
             return [None] * len(texts)
@@ -115,7 +116,7 @@ class TextClassifier:
             )
 
         try:
-            results = self.emotion_pipeline(texts, batch_size=16, truncation=True)
+            results = self.emotion_pipeline(texts, batch_size=16, truncation=True, max_length=512)
         except Exception as e:
             print(e)
             return [None] * len(texts)
@@ -125,25 +126,24 @@ class TextClassifier:
             labels.append(result.get("label", None))
         return labels
 
-    def get_llm_political_stance(self, candidates: list[str], texts: list[str]) -> list[str]:
-        """Returns 'Republican', 'Democratic' or 'Neutral' """
+    def get_llm_political_stance(self, candidates: list[str], texts: list[str]) -> list[str | None]:
+        """Returns 'Republican', 'Democratic' or 'Neutral' for each comment."""
+
         if not self.system_prompt:
             with open("../prompts/political_stance_yt.txt", "r", encoding="utf-8") as f:
                 self.system_prompt = f.read()
 
         labels = []
-        for i in range(len(candidates)):
-            candidate = candidates[i]
-            text = texts[i]
 
-            text = text.replace("'", "")
-            json = '{"candidate": ' + candidate + ', "comment": "' + text + '"}'
+        for candidate, text in zip(candidates, texts):
+            sanitized_text = text.replace('"', '\\"').replace('\n', ' ').strip()
+            json_input = f'{{"candidate": "{candidate}", "comment": "{sanitized_text}"}}'
 
             response = ollama.chat(
                 model="gemma3:4b",
                 messages=[
                     {"role": "system", "content": self.system_prompt},
-                    {"role": "user", "content": json},
+                    {"role": "user", "content": json_input},
                 ],
             )
 
@@ -151,6 +151,6 @@ class TextClassifier:
             if result in ["Democratic", "Republican", "Neutral"]:
                 labels.append(result)
             else:
-                labels.append(None)
+                labels.append(None)  # Fallback
 
         return labels

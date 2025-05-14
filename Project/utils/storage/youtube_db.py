@@ -148,7 +148,7 @@ class SQLiteYoutubeSaver:
         self.cursor.execute(f"""
             SELECT Comments.*
             FROM Comments JOIN main.CommentAnalysis CA on Comments.id = CA.id
-            WHERE CA.leaning IS NULL
+            WHERE CA.llm_label IS NULL
         """)
         comment_rows = self.cursor.fetchall()
 
