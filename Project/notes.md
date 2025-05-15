@@ -27,7 +27,7 @@ do those interactions reveal about conversational dynamics between political gro
 Before starting the analysis these are the numbers I have:
 - On Truth: 30k accounts and 75k posts
 - On BlueSky: 15k accounts and 20k posts
-- On Youtube: 18 videos (12 for trump, 6 for harris), 60k accounts and 115k comments
+- On Youtube: 18 videos (13 for trump, 5 for harris), 60k accounts and 115k comments
 
 Questions: 
 - Do I need to extract # of followers and following for each account?
