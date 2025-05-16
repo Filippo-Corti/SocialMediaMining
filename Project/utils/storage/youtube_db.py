@@ -120,7 +120,7 @@ class SQLiteYoutubeSaver:
         except sqlite3.Error as e:
             pass
 
-    def insert_comment_analysis(self, comment_id : int, **labels) -> None:
+    def insert_comment_analysis(self, comment_id : str, **labels) -> None:
         """Inserts or updates the comment analysis labels for the given comment"""
         # Prepare columns and values
         columns = list(labels.keys())
