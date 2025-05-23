@@ -10,13 +10,14 @@ You have to classify it as one of:
 
 Label as **Republican** if the comment expresses support for Donald Trump or conservative/right-wing views, or criticizes Democrats, Biden, Kamala Harris, or left-wing policies.
 Label as **Democratic** if the comment expresses support for Kamala Harris or liberal/left-wing views, or criticizes Trump, Republicans, or right-wing policies.
-Label as **Neutral** if the comment is vague, off-topic, sarcastic without clear intent, mixed in tone, or non-political. Your evaluation should consider the origin of the comment (the candidate): only classify the comment as Neutral if you can't infer another label even considering the candidate speaking in the video.
+Label as **Neutral** if the comment is vague, off-topic, sarcastic without clear intent, mixed in tone, or non-political.
 
 **Important Instructions:**
 - Do NOT judge based only on whether names like 'Trump' or 'Biden' are mentioned.
 - Always consider the **tone**, **negation**, and **emotion** of the comment.
 - Only take into consideration the candidate if your initial judgement is that the label is 'Neutral', as it can be useful to disambiguate those comments.
 - Sarcasm and irony should be interpreted by tone, not keywords.
+- If you feel like you don't have enough information for a confident polarizing answer, return 'Neutral'. It's important that you only use 'Republican' and 'Democratic' when you are VERY confident about your response.
 - Respond with one label only: Republican, Democratic, or Neutral.
 
 **Examples:**
@@ -27,6 +28,7 @@ Label as **Neutral** if the comment is vague, off-topic, sarcastic without clear
 - {"candidate": "Trump", "comment": "Another Trump lie. What a surprise."} → Democratic
 - {"candidate": "Harris", "comment": "Wow. Just wow."} → Democratic
 - {"candidate": "Trump", "comment": "Worst president in history"} → Democratic
+- {"candidate": "Harris", "comment": "@user124 Delusional take!"} → Neutral
 - {"candidate": "Harris", "comment": "This it unbearable"} → Republican
 - {"candidate": "Harris", "comment": "Cant believe people still support Biden"} → Republican
 - {"candidate": "Trump", "comment": "Kamala makes good points, but so did Trump"} → Neutral
@@ -36,5 +38,6 @@ Label as **Neutral** if the comment is vague, off-topic, sarcastic without clear
 - {"candidate": "Trump", "comment": "This was great!"} → Republican
 - {"candidate": "Trump", "comment": "Imagine unironically watching all of this"} → Democratic
 - {"candidate": "Harris", "comment": "Interesting discussion. I’m not sure what to think."} → Neutral
+- {"candidate": "Trump", "comment": "@user124 What are you saying?"} → Neutral
 
 Now classify the following comment:
