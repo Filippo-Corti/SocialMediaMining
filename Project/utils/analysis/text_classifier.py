@@ -1,6 +1,9 @@
 from transformers import pipeline, Pipeline, AutoTokenizer
+import google.generativeai as genai
 import ollama
 import json
+import re
+import time
 
 
 class TextClassifier:
@@ -13,6 +16,7 @@ class TextClassifier:
         self.sentiment_pipeline: Pipeline | None = None
         self.emotion_pipeline: Pipeline | None = None
         self.system_prompt: str | None = None
+        self.gemini_model : genai.GenerativeModel | None = None
 
     def get_political_bias(self, texts: list[str]) -> list[str | None]:
         """Returns 'RIGHT', 'LEFT' or 'CENTER' """
@@ -148,6 +152,52 @@ class TextClassifier:
             )
 
             result = response['message']['content'].strip()
+            if result in ["Democratic", "Republican", "Neutral"]:
+                labels.append(result)
+            else:
+                labels.append(None)  # Fallback
+
+        return labels
+
+
+    def get_gemini_stance(self, candidates: list[str], texts: list[str]) -> list[str | None]:
+        """Returns 'Republican', 'Democratic' or 'Neutral' for each comment."""
+
+        if not self.system_prompt:
+            with open("../prompts/political_stance_yt.txt", "r", encoding="utf-8") as f:
+                self.system_prompt = f.read()
+
+        if not self.gemini_model:
+            credentials = json.load(open('../../keys/google_ai_keys.json'))
+            google_ai_key = credentials['api_key']
+            genai.configure(api_key=google_ai_key)
+
+            self.gemini_model = genai.GenerativeModel(
+                model_name="gemini-2.0-flash-lite",
+                system_instruction=self.system_prompt
+            )
+
+        def generate_response(user_input : str) -> str | None:
+            try:
+                response = self.gemini_model.generate_content(user_input)
+                return response.text.strip().replace('\n', '')
+            except Exception as e:
+                match = re.search(r"seconds:\s*(\d+)", str(e))
+                retry_seconds = int(match.group(1)) if match else None
+                if retry_seconds is not None:
+                    print(f"Quota exceeded. Retrying in {retry_seconds} seconds.")
+                    time.sleep(retry_seconds)
+                    return generate_response(user_input)
+                else:
+                    return None
+
+        labels = []
+
+        for candidate, text in zip(candidates, texts):
+            sanitized_text = text.replace('"', '\\"').replace('\n', ' ').strip()
+            json_input = f'{{"candidate": "{candidate}", "comment": "{sanitized_text}"}}'
+
+            result = generate_response(json_input)
             if result in ["Democratic", "Republican", "Neutral"]:
                 labels.append(result)
             else:

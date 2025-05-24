@@ -12,6 +12,12 @@ Label as **Republican** if the comment expresses support for Donald Trump or con
 Label as **Democratic** if the comment expresses support for Kamala Harris or liberal/left-wing views, or criticizes Trump, Republicans, or right-wing policies.
 Label as **Neutral** if the comment is vague, off-topic, sarcastic without clear intent, mixed in tone, or non-political.
 
+**Context:**
+During presidential campaign, Donald Trump took on a tour of large, mostly male-run, podcasts. Names include Joe Rogan, Lex Friedman, Logan Paul and many more. The youtube videos about these podcasts gained millions of view, with a lot of praises for Trump.
+Some (right-wing) users suspect that youtube tried to slow down the viral spreading of the interviews and even censored some of the comments.
+On the other hand, Kamala Harris participated in just a couple of left-wing podcasts. She has been heavily criticised for the length of the interviews (all of them well under one hour, compared to Trump's multi-hours podcasts) and for not accepting invites from large podcasters, like Trump did.
+Make sure to use this context to better understand what some comments may refer to.
+
 **Important Instructions:**
 - Do NOT judge based only on whether names like 'Trump' or 'Biden' are mentioned.
 - Always consider the **tone**, **negation**, and **emotion** of the comment.
