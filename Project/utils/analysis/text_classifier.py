@@ -183,14 +183,11 @@ class TextClassifier:
                 return response.text.strip().replace('\n', '')
             except Exception as e:
                 match = re.search(r"seconds:\s*(\d+)", str(e))
-                retry_seconds = int(match.group(1)) if match else None
+                retry_seconds = int(match.group(1)) if match else 60
                 if retry_seconds is not None:
                     print(f"Quota exceeded. Retrying in {retry_seconds} seconds.")
                     time.sleep(retry_seconds)
                     return generate_response(user_input)
-                else:
-                    print(e)
-                    return None
 
         labels = []
 
