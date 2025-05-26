@@ -242,8 +242,24 @@ class SQLiteYoutubeSaver:
             account_row[0]: account_row
             for account_row in self.cursor.fetchall()
         }
+        self.cursor.execute(f"""
+            WITH ranked AS (
+                SELECT C1.author_id, C1.video_id, V.channel_title, COUNT(*) AS comment_count,
+                       ROW_NUMBER() OVER (PARTITION BY C1.author_id ORDER BY COUNT(*) DESC) AS rn
+                FROM Comments C1 JOIN main.Videos V on C1.video_id = V.id
+                GROUP BY C1.author_id, C1.video_id
+            )
+            SELECT author_id, video_id, channel_title, comment_count
+            FROM ranked
+            WHERE rn = 1;""")
+        most_commented_video = { # Most commented video per author id
+            comment_row[0]: (comment_row[1], comment_row[2])
+            for comment_row in self.cursor.fetchall()
+        }
+
 
         edges = list()
+
 
         node_attributes = {}
         for account_id, account in accounts.items():
@@ -251,7 +267,9 @@ class SQLiteYoutubeSaver:
                 id=account_id,
                 username=account[1],
                 url=account[2],
-                comments_count=0
+                comments_count=0,
+                most_commented_video_id=most_commented_video[account_id][0],
+                most_commented_video_title=most_commented_video[account_id][1],
             )
 
         edge_attributes = {}

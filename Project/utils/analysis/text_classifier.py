@@ -169,11 +169,11 @@ class TextClassifier:
 
         if not self.gemini_model:
             credentials = json.load(open('../../keys/google_ai_keys.json'))
-            google_ai_key = credentials['api_key3']
+            google_ai_key = credentials['api_key2']
             genai.configure(api_key=google_ai_key)
 
             self.gemini_model = genai.GenerativeModel(
-                model_name="gemini-2.0-flash",
+                model_name="gemini-2.0-flash-lite",
                 system_instruction=self.system_prompt
             )
 
