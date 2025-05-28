@@ -125,3 +125,19 @@ class YTThreadTree:
 
     def get_comments_per_user(self) -> float:
         return self.get_size() / self.get_unique_users()
+
+    def get_branches(self) -> list[list[YTComment]]:
+        """Returns all the branches from root to leaves"""
+        branches = list()
+
+        def dfs(node: YTThreadTree, path: list[YTComment]):
+            path.append(node.value)
+            if not node.children:
+                branches.append(path.copy())
+            else:
+                for child in node.children:
+                    dfs(child, path)
+            path.pop()
+
+        dfs(self, list())
+        return branches

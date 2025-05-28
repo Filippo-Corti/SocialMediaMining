@@ -37,7 +37,7 @@ Questions:
 
 FOR Truth vs Bluesky:
 
-- Consider Normalizing Networks by having two Networks with around same number of nodes (same order)
+**- Consider Normalizing Networks by having two Networks with around same number of nodes (same order)
 - Visualize the networks
 1. Basic measures:
   - Size and Order
@@ -56,7 +56,7 @@ ECHO CHAMBERS -> ECHO CHAMBERS THEORY:
    1. Network Modularity and Community Detection
    2. Stance Homogeneity within Communities (Check out Homophily from Echo Chambers paper)
    3. Stance Assortativity (SELECTIVE EXPOSURE)
-   4. Information Diffusion Simulation (SIR Model - Check out part 2 from Echo Chambers paper)
+   4. Information Diffusion Simulation (SIR Model - Check out part 2 from Echo Chambers paper)**
 
 
 
@@ -73,7 +73,7 @@ FOR Youtube:
 3. DELIBERATIVE DEMOCRACY THEORY (identifying cross-partisan threads and their characteristics):
    1. Stance Labeling of content using LLMs (Left, Neutral, Right) or not LLMs
    2. Aggregate for User-Level stance -> Categorize users
-   3. Analyze Comment Threads in general (see paper Etta et al.) [COULD BE DONE BEFORE]
+   3. Analyze Comment Threads in general (see paper Etta et al.) <-- CODICE PRONTO
       For each of these metrics, distribution and average -> And compare those with root stance left and root stance right:
       - Tree Size
       - Tree Depth
@@ -82,7 +82,7 @@ FOR Youtube:
       - Assortativity on Stance
       - Number of Unique users
       - Root Stance
-   4. Find Cross-Partisan Interactions (see Wu & Resnick paper) -> Do they match bridges?
+   4. Find Cross-Partisan Interactions (see Wu & Resnick paper) -> Do they match bridges? <-- CODICE PRONTO (Meno la parte dei bridge)
    5. Interaction Outcome Analysis with LLMs for these Cross-Partisan conversations
       - Tone (Hostile, Neutral, Friendly)
       - Escalation (Does the conflict increase?)
@@ -110,3 +110,31 @@ NOW WHAT:
 
 ------------------------
 
+
+
+
+Youtube Statistics
+
+trump_podcasts = [
+    "xrFdHO7FH8w", # LOGAN PAUL <-- 6,919,229 views and 23,451 Comments
+    "blqIZGXWUpU", # ALL IN PODCAST <-- 3,546,156 views and 12,693 Comments
+    "s11uIW7wi-E", # ADIN ROSS <-- 2,862,938 views and 23,369 Comments
+    "vC5cHjcgt5g", # THEO VON <-- 16,885,186 views and 67,194 Comments
+    "G80iLTctFuY", # SHAWN RYAN SHOW <-- 4,506,617 views and 26,421 Comments
+    "qCbfTN-caFI", # LEX FRIEDMAN <-- 7,654,694 views and 57,831 Comments
+    "Ry1IjOft95c", # FLAGRANT <-- 9,608,703 views and 49,343 Comments
+    "S7BTdUaNQM8", # FULL SEND PODCAST <-- 3,376,579 views and 5,465 Comments
+    "1SsmPh8gCxU", # BUSSIN WITH THE BOYS <-- 479,673 views and 2,982 Comments
+    "-dmwG54QsKc", # PBD PODCAST <-- 3,281,899 views and 24,990 Comments
+    "nwQil7tcImI", # OUTKICK <-- 1,527,558 views and 10,564 Comments
+    "G9lXnwuZ2qs", # SIX FEET UNDER <-- 1,168,871 views and 10,188 Comments
+    "hBMoPUAeLnY"  # JRE <-- 58,997,908 views and 535,832 Comments
+]
+
+harris_podcasts = [
+    "_KCRsjPCiCI", # CALL HER DADDY <-- 990,083 views and 30,356 Comments
+    "bzThwqnQJDY", # ALL THE SMOKE <-- 709,935 views and 28,536 Comments
+    "7L4sts7I3xI", # BREAKFAST CLUB <-- 588,647 views and 36,869 Comments
+    "pNbwMrBMGgE", # THE HOWARD STERN SHOW <-- 1,893,939 views and 9,251 Comments
+    "Vu5yD3fu6A8", # CLUB SHAY SHAY <-- 1,711,984 views and 73,014 Comments
+]
