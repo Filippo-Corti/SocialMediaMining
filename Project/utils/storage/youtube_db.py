@@ -55,6 +55,7 @@ class SQLiteYoutubeSaver:
             sentiment TEXT,
             emotion TEXT,
             llm_label TEXT,
+            gemini_label TEXT,
             label INTEGER,
             FOREIGN KEY (id) REFERENCES Comments(id)
         )''')
@@ -148,7 +149,6 @@ class SQLiteYoutubeSaver:
         self.cursor.execute(f"""
             SELECT Comments.*
             FROM Comments JOIN main.CommentAnalysis CA on Comments.id = CA.id
-            WHERE CA.gemini_label IS NULL
         """)
         comment_rows = self.cursor.fetchall()
 

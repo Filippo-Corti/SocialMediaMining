@@ -16,7 +16,8 @@ class TextClassifier:
         self.sentiment_pipeline: Pipeline | None = None
         self.emotion_pipeline: Pipeline | None = None
         self.system_prompt: str | None = None
-        self.gemini_model : genai.GenerativeModel | None = None
+        self.gemini_model_yt : genai.GenerativeModel | None = None
+        self.gemini_model_bt : genai.GenerativeModel | None = None
 
     def get_political_bias(self, texts: list[str]) -> list[str | None]:
         """Returns 'RIGHT', 'LEFT' or 'CENTER' """
@@ -130,7 +131,7 @@ class TextClassifier:
             labels.append(result.get("label", None))
         return labels
 
-    def get_llm_political_stance(self, candidates: list[str], texts: list[str]) -> list[str | None]:
+    def get_local_llm_yt_stance(self, candidates: list[str], texts: list[str]) -> list[str | None]:
         """Returns 'Republican', 'Democratic' or 'Neutral' for each comment."""
 
         if not self.system_prompt:
@@ -160,26 +161,26 @@ class TextClassifier:
         return labels
 
 
-    def get_gemini_stance(self, candidates: list[str], texts: list[str]) -> list[str | None]:
+    def get_gemini_yt_stance(self, candidates: list[str], texts: list[str]) -> list[str | None]:
         """Returns 'Republican', 'Democratic' or 'Neutral' for each comment."""
 
         if not self.system_prompt:
             with open("../prompts/political_stance_yt.txt", "r", encoding="utf-8") as f:
                 self.system_prompt = f.read()
 
-        if not self.gemini_model:
+        if not self.gemini_model_yt:
             credentials = json.load(open('../../keys/google_ai_keys.json'))
             google_ai_key = credentials['api_key2']
             genai.configure(api_key=google_ai_key)
 
-            self.gemini_model = genai.GenerativeModel(
+            self.gemini_model_yt = genai.GenerativeModel(
                 model_name="gemini-2.0-flash-lite",
                 system_instruction=self.system_prompt
             )
 
         def generate_response(user_input : str) -> str | None:
             try:
-                response = self.gemini_model.generate_content(user_input)
+                response = self.gemini_model_yt.generate_content(user_input)
                 return response.text.strip().replace('\n', '')
             except Exception as e:
                 match = re.search(r"seconds:\s*(\d+)", str(e))
@@ -202,3 +203,47 @@ class TextClassifier:
                 labels.append(None)  # Fallback
 
         return labels
+
+    def get_gemini_bt_stance(self, texts: list[str]) -> list[str | None]:
+        """Returns 'Republican', 'Democratic' or 'Neutral' for each comment."""
+
+        if not self.system_prompt:
+            with open("../prompts/political_stance_bt.txt", "r", encoding="utf-8") as f:
+                self.system_prompt = f.read()
+
+        if not self.gemini_model_bt:
+            credentials = json.load(open('../../keys/google_ai_keys.json'))
+            google_ai_key = credentials['api_key2']
+            genai.configure(api_key=google_ai_key)
+
+            self.gemini_model_bt = genai.GenerativeModel(
+                model_name="gemini-2.0-flash",
+                system_instruction=self.system_prompt
+            )
+
+        def generate_response(user_input : str) -> str | None:
+            try:
+                response = self.gemini_model_bt.generate_content(user_input)
+                return response.text.strip().replace('\n', '')
+            except Exception as e:
+                match = re.search(r"seconds:\s*(\d+)", str(e))
+                retry_seconds = int(match.group(1)) if match else 60
+                if retry_seconds is not None:
+                    print(f"Quota exceeded. Retrying in {retry_seconds} seconds.")
+                    time.sleep(retry_seconds)
+                    return generate_response(user_input)
+
+        labels = []
+
+        for text in texts:
+            sanitized_text = text.replace('"', '\\"').replace('\n', ' ').strip()
+            json_input = f'{{"post": "{sanitized_text}"}}'
+
+            result = generate_response(json_input)
+            if result in ["Democratic", "Republican", "Neutral"]:
+                labels.append(result)
+            else:
+                labels.append(None)  # Fallback
+
+        return labels
+
