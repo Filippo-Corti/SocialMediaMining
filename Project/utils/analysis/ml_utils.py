@@ -12,7 +12,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import precision_score, recall_score
 
 
-def precision_recall_weighted(y_true, y_pred):
+def precision_recall_weighted(y_true, y_pred, **kwargs):
     """Custom scorer that weights 70% precision and 30% recall"""
     precision = precision_score(y_true, y_pred, average='binary', zero_division=0)
     recall = recall_score(y_true, y_pred, average='binary', zero_division=0)
