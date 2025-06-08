@@ -203,6 +203,20 @@ class SQLiteTruthSaver:
             for account_row in self.cursor.fetchall()
         }
 
+        self.cursor.execute("""
+            SELECT
+                C.author_id,
+                AVG(CA.label) AS avg_label
+            FROM Posts C
+            JOIN CommentAnalysis CA ON C.id = CA.id
+            GROUP BY C.author_id
+        """)
+        accounts_stance = {
+            account_row[0]: account_row[1]
+            for account_row in self.cursor.fetchall()
+        }
+
+
         edges = list()
 
         node_attributes = {}
@@ -212,7 +226,8 @@ class SQLiteTruthSaver:
                 username=account[1],
                 display_name=account[2],
                 url=account[3],
-                posts_count=0
+                posts_count=0,
+                average_stance=accounts_stance.get(account_id, 0)
             )
 
         edge_attributes = {}

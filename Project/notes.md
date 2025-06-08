@@ -53,10 +53,9 @@ FOR Truth vs Bluesky:
     - Lorenz Curve
 4. Echo Chambers Theory (requires Machine Learning for content labeling)
 ECHO CHAMBERS -> ECHO CHAMBERS THEORY:
-   1. Network Modularity and Community Detection
+   1. Stance Assortativity (SELECTIVE EXPOSURE)
    2. Stance Homogeneity within Communities (Check out Homophily from Echo Chambers paper)
-   3. Stance Assortativity (SELECTIVE EXPOSURE)
-   4. Information Diffusion Simulation (SIR Model - Check out part 2 from Echo Chambers paper)
+   3. Information Diffusion Simulation (SIR Model - Check out part 2 from Echo Chambers paper)
 
 
 

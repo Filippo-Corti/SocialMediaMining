@@ -243,18 +243,43 @@ class SQLiteYoutubeSaver:
             for account_row in self.cursor.fetchall()
         }
         self.cursor.execute(f"""
-            WITH ranked AS (
-                SELECT C1.author_id, C1.video_id, V.channel_title, COUNT(*) AS comment_count,
-                       ROW_NUMBER() OVER (PARTITION BY C1.author_id ORDER BY COUNT(*) DESC) AS rn
-                FROM Comments C1 JOIN main.Videos V on C1.video_id = V.id
+            WITH ranked AS ( -- Get the most commented video_id by the user
+                SELECT
+                    C1.author_id,
+                    C1.video_id,
+                    V.channel_title,
+                    COUNT(*) AS comment_count,
+                    ROW_NUMBER() OVER (PARTITION BY C1.author_id ORDER BY COUNT(*) DESC) AS rn
+                FROM Comments C1
+                JOIN main.Videos V ON C1.video_id = V.id
                 GROUP BY C1.author_id, C1.video_id
+            ),
+            label_avg AS ( -- Get the average stance label from its comments
+                SELECT
+                    C.author_id,
+                    AVG(CA.label) AS avg_label
+                FROM Comments C
+                JOIN CommentAnalysis CA ON C.id = CA.id
+                GROUP BY C.author_id
             )
-            SELECT author_id, video_id, channel_title, comment_count
-            FROM ranked
-            WHERE rn = 1;""")
+            SELECT
+                r.author_id,
+                r.video_id,
+                r.channel_title,
+                r.comment_count,
+                la.avg_label
+            FROM ranked r
+            LEFT JOIN label_avg la ON r.author_id = la.author_id
+            WHERE r.rn = 1;
+        """)
+        data = self.cursor.fetchall()
         most_commented_video = { # Most commented video per author id
             comment_row[0]: (comment_row[1], comment_row[2])
-            for comment_row in self.cursor.fetchall()
+            for comment_row in data
+        }
+        user_stance = { # Average comment stance per author_id
+            comment_row[0]: comment_row[4]
+            for comment_row in data
         }
 
 
@@ -270,6 +295,7 @@ class SQLiteYoutubeSaver:
                 comments_count=0,
                 most_commented_video_id=most_commented_video[account_id][0],
                 most_commented_video_title=most_commented_video[account_id][1],
+                average_stance=user_stance[account_id],
             )
 
         edge_attributes = {}
