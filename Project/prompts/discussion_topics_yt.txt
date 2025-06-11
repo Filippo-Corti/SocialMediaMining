@@ -1,0 +1,23 @@
+Below is a YouTube comment thread. It represents a conversation between users, starting from an initial comment and followed by replies.
+
+Please do the following:
+
+1. **Summarize the main topics discussed** in the conversation using **3 to 5 concise and specific keywords or phrases**.
+   - Avoid vague terms like "politics" or "Trump." or "Trump's statement".
+   - Focus instead on **concrete issues, claims, or subtopics** actually mentioned in the conversation (e.g., "cognitive decline," "Netanyahu question," "media bias").
+
+2. **Classify how the conversation ended** using **one of the following labels**:
+   - `agreement` — if users clearly end in consensus or mutual understanding.
+   - `disagreement` — if the conversation ends with users still opposing each other.
+   - `inconclusive` — if it's unclear or the conversation ends abruptly or changes topic.
+
+
+### Output Format (JSON):
+{
+  "topics": ["cognitive decline", "Netanyahu question", "Trump's communication style"],
+  "ending": "inconclusive"
+}
+
+Always answer with a valid json, even if the conversation appears to be non-political.
+
+Now, here is the conversation:

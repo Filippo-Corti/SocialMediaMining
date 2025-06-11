@@ -4,6 +4,7 @@ import ollama
 import json
 import re
 import time
+import requests
 
 
 class TextClassifier:
@@ -16,8 +17,10 @@ class TextClassifier:
         self.sentiment_pipeline: Pipeline | None = None
         self.emotion_pipeline: Pipeline | None = None
         self.system_prompt: str | None = None
-        self.gemini_model_yt : genai.GenerativeModel | None = None
-        self.gemini_model_bt : genai.GenerativeModel | None = None
+        self.system_prompt_path : str | None = None
+        self.gemini_model_yt: genai.GenerativeModel | None = None
+        self.gemini_model_bt: genai.GenerativeModel | None = None
+        self.perspective_key: str | None = None
 
     def get_political_bias(self, texts: list[str]) -> list[str | None]:
         """Returns 'RIGHT', 'LEFT' or 'CENTER' """
@@ -56,7 +59,7 @@ class TextClassifier:
             print(e)
             return [None] * len(texts)
 
-        labels : list[str | None] = list()
+        labels: list[str | None] = list()
         for result in results:
             leaning = result.get('label', None)
             match leaning:
@@ -160,16 +163,17 @@ class TextClassifier:
 
         return labels
 
-
     def get_gemini_yt_stance(self, candidates: list[str], texts: list[str]) -> list[str | None]:
         """Returns 'Republican', 'Democratic' or 'Neutral' for each comment."""
 
-        if not self.system_prompt:
-            with open("../prompts/political_stance_yt.txt", "r", encoding="utf-8") as f:
+        prompt_path = "../prompts/political_stance_yt.txt"
+        if not self.system_prompt or self.system_prompt_path != prompt_path:
+            with open(prompt_path, "r", encoding="utf-8") as f:
                 self.system_prompt = f.read()
+                self.system_prompt_path = prompt_path
 
         if not self.gemini_model_yt:
-            credentials = json.load(open('../../keys/google_ai_keys.json'))
+            credentials = json.load(open('../keys/google_ai_keys.json'))
             google_ai_key = credentials['api_key2']
             genai.configure(api_key=google_ai_key)
 
@@ -178,7 +182,7 @@ class TextClassifier:
                 system_instruction=self.system_prompt
             )
 
-        def generate_response(user_input : str) -> str | None:
+        def generate_response(user_input: str) -> str | None:
             try:
                 response = self.gemini_model_yt.generate_content(user_input)
                 return response.text.strip().replace('\n', '')
@@ -207,12 +211,15 @@ class TextClassifier:
     def get_gemini_bt_stance(self, texts: list[str]) -> list[str | None]:
         """Returns 'Republican', 'Democratic' or 'Neutral' for each comment."""
 
-        if not self.system_prompt:
-            with open("../prompts/political_stance_bt.txt", "r", encoding="utf-8") as f:
+        prompt_path = "../prompts/political_stance_bt.txt"
+        if not self.system_prompt or self.system_prompt_path != prompt_path:
+            with open(prompt_path, "r", encoding="utf-8") as f:
                 self.system_prompt = f.read()
+                self.system_prompt_path = prompt_path
+
 
         if not self.gemini_model_bt:
-            credentials = json.load(open('../../keys/google_ai_keys.json'))
+            credentials = json.load(open('../keys/google_ai_keys.json'))
             google_ai_key = credentials['api_key2']
             genai.configure(api_key=google_ai_key)
 
@@ -221,7 +228,7 @@ class TextClassifier:
                 system_instruction=self.system_prompt
             )
 
-        def generate_response(user_input : str) -> str | None:
+        def generate_response(user_input: str) -> str | None:
             try:
                 response = self.gemini_model_bt.generate_content(user_input)
                 return response.text.strip().replace('\n', '')
@@ -247,3 +254,65 @@ class TextClassifier:
 
         return labels
 
+    def get_toxicity_score(self, text: str) -> float | None:
+        if not self.perspective_key:
+            credentials = json.load(open('../keys/perspective_key.json'))
+            self.perspective_key = credentials['api_key']
+
+        PERSPECTIVE_URL = "https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze"
+        data = {
+            "comment": {"text": text},
+            "languages": ["en"],
+            "requestedAttributes": {"TOXICITY": {}}
+        }
+        params = {"key": self.perspective_key}
+
+        try:
+            response = requests.post(PERSPECTIVE_URL, params=params, json=data)
+            response.raise_for_status()
+            result = response.json()
+            score = result["attributeScores"]["TOXICITY"]["summaryScore"]["value"]
+            return score
+        except Exception as e:
+            print(f"Error using Perspective API: {e}")
+            return None
+
+    def get_gemini_discussion_analysis(self, discussion: str) -> dict | None:
+        """Returns topics and outcome for each comment."""
+
+        prompt_path = "prompts/discussion_topics_yt.txt"
+        if not self.system_prompt or self.system_prompt_path != prompt_path:
+            with open(prompt_path, "r", encoding="utf-8") as f:
+                self.system_prompt = f.read()
+                self.system_prompt_path = prompt_path
+
+        if not self.gemini_model_yt:
+            credentials = json.load(open('../keys/google_ai_keys.json'))
+            google_ai_key = credentials['api_key']
+            genai.configure(api_key=google_ai_key)
+
+            self.gemini_model_yt = genai.GenerativeModel(
+                model_name="gemini-2.0-flash",
+                system_instruction=self.system_prompt
+            )
+
+        def generate_response(user_input: str) -> str | None:
+            try:
+                response = self.gemini_model_yt.generate_content(user_input)
+                return response.text.strip().replace('\n', '')
+            except Exception as e:
+                match = re.search(r"seconds:\s*(\d+)", str(e))
+                retry_seconds = int(match.group(1)) if match else 60
+                if retry_seconds is not None:
+                    print(f"Quota exceeded. Retrying in {retry_seconds} seconds.")
+                    time.sleep(retry_seconds)
+                    return generate_response(user_input)
+
+        result = generate_response(discussion)
+        try:
+            raw = result.strip().removeprefix("```json").removesuffix("```").strip()
+            json_result = json.loads(raw)
+            return json_result
+        except Exception as e:
+            print(f"Invalid JSON (response was {result})")
+            return None
