@@ -137,3 +137,63 @@ harris_podcasts = [
     "pNbwMrBMGgE", # THE HOWARD STERN SHOW <-- 1,893,939 views and 9,251 Comments
     "Vu5yD3fu6A8", # CLUB SHAY SHAY <-- 1,711,984 views and 73,014 Comments
 ]
+
+------------------------ 
+
+SLIDES:
+
+Topic: Political Discourse across Social Media
+
+Research Questions:
+RQ1. "Come avvengono le discussioni politiche su piattaforme con forte polarizzazione ideologica?”
+   > Più precisamente, si formano Echo Chambers?
+
+RQ2. "In che modo avviene il dibattito politico in ambienti digitali misti?"
+   > Più precisamente, il dibattito è costruttivo o distruttivo?
+   
+RQ1
+- Piattaforme: Bluesky, TruthSocial. Tema: Dazi (Tariffs)
+- Data Collection: (condizionata dall'accesso ai dati offerto da truth)
+  - gli ultimi 500 posti con keyword "tariffs" + le risposte a quei post
+  - immediatamente evidente un problema di disparità: su bluesky se ne parla molto di meno > I post diventano 1500
+- Basic Network Analysis:
+  - Le 2 reti (disomogenee)
+  - Forest fire sampling --> per avere reti confrontabili
+  - Dati sulle 2 reti con grafici...
+- Machine Learning:
+  - Necessità di classificazione degli utenti per political stance
+    - Soluzione: classificazione dei commenti. La stance di un utente è la stance media dei commenti.
+  - Strategia: fine tuning di un modello BERT, già addestrato per temi politici.
+    - Perché? Perché già addestrato sui POST + perché è relativamente facile determinare la stance di un utente da un post. 
+    - Label tramite Gemini Flash 2.
+  - ... posso mostrare i risultati con i grafici ...
+- Advanced Network Analysis (Echo Chambers Detection):
+  1. Assortativity
+  2. Neighbourhood Leaning
+  3. Community Homophily
+  4. Information Diffusion Simulation (SIR)
+
+RQ2
+- Piattaforma: Youtube. Tema: 2024 Presidential Elections (Trump vs Harris)
+- Data Collection:
+  - "podcast tour" di Trump e Harris, perché
+    - è un "ambiente misto"
+    - è stato considerato impattante sull'esito dell'elezione e si prospetta ancora più importante in futuro
+  - Anche in questo caso, abbiamo grande diversità (meno problematica nei dati)
+- Basic Network Analysis:
+  - La rete youtube nelle varie colorazioni
+- Machine Learning:
+  - Anche in questo caso, necessità di classificare gli utenti (e dunque i commenti)
+  - Strategia:
+    1. Feature Extraction via simpler models
+    2. (Failed to use Snorkel)
+    3. (Failed to use a singular machine learning model)
+    4. Due modelli di machine learning: Republican vs Others - Democratic vs Others
+    5. Merge delle predizioni
+- Advanced Network Analysis (Conversations Analysis)
+  - A partire da un thread di youtube costruisco l'albero
+    - Statistiche sui threads, confrontando per provenienza/root stance/...
+  - Da ogni albero posso ricavare i branch, ovvero le conversazioni
+    - Quali topic trattano i branch?
+    - Quanto sono tossici mediamente?
+    - Quanto sono inconclusivi?
