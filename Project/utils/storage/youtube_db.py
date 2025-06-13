@@ -278,7 +278,7 @@ class SQLiteYoutubeSaver:
             for comment_row in data
         }
         user_stance = { # Average comment stance per author_id
-            comment_row[0]: comment_row[4]
+            comment_row[0]: comment_row[4] if comment_row[4] is not None else 0.0
             for comment_row in data
         }
 
@@ -295,7 +295,7 @@ class SQLiteYoutubeSaver:
                 comments_count=0,
                 most_commented_video_id=most_commented_video[account_id][0],
                 most_commented_video_title=most_commented_video[account_id][1],
-                average_stance=user_stance[account_id],
+                average_stance=user_stance.get(account_id, 0.0),
             )
 
         edge_attributes = {}
